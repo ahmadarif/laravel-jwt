@@ -6,21 +6,39 @@ use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Foundation\Bus\DispatchesJobs;
 use Illuminate\Foundation\Validation\ValidatesRequests;
+use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Routing\Controller as BaseController;
+use Illuminate\Validation\ValidationException;
 
 class Controller extends BaseController
 {
     use AuthorizesRequests, DispatchesJobs, ValidatesRequests;
 
     /**
-     * @param $validator
+     * @param Request $request
+     * @param array $rules
+     * @param array $messages
+     * @param array $customAttributes
+     * @throws ValidationException
+     */
+    public function validate(Request $request, array $rules, array $messages = [], array $customAttributes = [])
+    {
+        $validator = $this->getValidationFactory()->make($request->all(), $rules, $messages, $customAttributes);
+
+        if ($validator->fails()) {
+            throw new ValidationException($validator);
+        }
+    }
+
+    /**
+     * @param ValidationException $e
      * @return Response
      */
-    public function responseValidation($validator) {
+    public function responseValidation(ValidationException $e) {
         return response([
-            'message' => 'Validation error',
-            'erros' => $validator->errors()
+            'message' => 'Validation error hahaha',
+            'erros' => $e->validator->errors()
         ], Response::HTTP_BAD_REQUEST);
     }
 
