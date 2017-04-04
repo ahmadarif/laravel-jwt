@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
+use Illuminate\Validation\ValidationException;
 use JWTAuth;
 use Tymon\JWTAuth\Exceptions\JWTException;
 use Validator;
@@ -20,13 +21,13 @@ class AuthenticateController extends Controller
 
     public function postLogin(Request $request)
     {
-        $validator = Validator::make($request->all(), [
-            'email' => 'required|email|max:255',
-            'password' => 'required',
-        ]);
-
-        if ($validator->fails()) {
-            return $this->responseValidation($validator);
+        try {
+            $this->validate($request, [
+                'email' => 'required|email|max:255',
+                'password' => 'required',
+            ]);
+        } catch (ValidationException $e) {
+            return $this->responseValidation($e);
         }
 
         // grab credentials from the request
