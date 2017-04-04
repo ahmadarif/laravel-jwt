@@ -23,8 +23,8 @@ $api->version('v1', [
         $api->post('/login', 'Auth\AuthenticateController@postLogin');
 
         $api->group(['middleware' => 'api.auth', 'providers' => 'jwt'], function ($api) {
-            $api->delete('/invalidate', 'Auth\AuthenticateController@deleteInvalidate');
             $api->patch('/refreshToken', 'Auth\AuthenticateController@patchRefreshToken');
+            $api->delete('/invalidate', 'Auth\AuthenticateController@deleteInvalidate');
             $api->get('/profil', 'Auth\AuthenticateController@getProfil');
         });
     });
