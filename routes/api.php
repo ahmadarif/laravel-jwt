@@ -13,11 +13,19 @@
 
 $api = app('Dingo\Api\Routing\Router');
 
-$api->version('v1', ['namespace' => 'App\Http\Controllers'], function ($api) {
+$api->version('v1', [
+    'namespace' => 'App\Http\Controllers',
+    'middleware' => 'api.throttle',
+    'limit' => 100,
+    'expires' => 1
+], function ($api) {
     $api->group(['prefix' => '/auth'], function ($api){
         $api->post('/login', 'Auth\AuthenticateController@postLogin');
-        $api->delete('/invalidate', 'Auth\AuthenticateController@deleteInvalidate');
-        $api->patch('/refreshToken', 'Auth\AuthenticateController@patchRefreshToken');
-        $api->get('/profil', 'Auth\AuthenticateController@getProfil');
+
+        $api->group(['middleware' => 'api.auth', 'providers' => 'jwt'], function ($api) {
+            $api->delete('/invalidate', 'Auth\AuthenticateController@deleteInvalidate');
+            $api->patch('/refreshToken', 'Auth\AuthenticateController@patchRefreshToken');
+            $api->get('/profil', 'Auth\AuthenticateController@getProfil');
+        });
     });
 });
