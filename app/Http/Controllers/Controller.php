@@ -16,22 +16,6 @@ class Controller extends BaseController
     use AuthorizesRequests, DispatchesJobs, ValidatesRequests;
 
     /**
-     * @param Request $request
-     * @param array $rules
-     * @param array $messages
-     * @param array $customAttributes
-     * @throws ValidationException
-     */
-    public function validate(Request $request, array $rules, array $messages = [], array $customAttributes = [])
-    {
-        $validator = $this->getValidationFactory()->make($request->all(), $rules, $messages, $customAttributes);
-
-        if ($validator->fails()) {
-            throw new ValidationException($validator);
-        }
-    }
-
-    /**
      * @param ValidationException $e
      * @return Response
      */
